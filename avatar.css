@@ -1,0 +1,22 @@
+/* avatar.css - avatar + thinking animation */
+#aguacate-container{ display:flex; justify-content:center; margin:20px; }
+#aguacate{
+  width:170px;height:210px;background:#9dd84d;border:6px solid #276128;border-radius:90px;position:relative;
+  transition: transform .2s ease;
+}
+#aguacate.thinking { animation: thinkingPulse 1s ease-in-out infinite; transform-origin:center bottom; }
+@keyframes thinkingPulse {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(0.985); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* eyes/mouth etc. */
+.eyes{ position:absolute; z-index:20; display:flex; gap:26px; top:60px; left:40px; }
+.eye{ width:22px; height:22px; background:black; border-radius:50%; position:relative; animation:blink 6s infinite; }
+.eye::after{ content:""; position:absolute; top:3px; left:4px; width:6px; height:6px; background:white; border-radius:50%; }
+.blush{ width:22px; height:14px; background:#ffb6c1; position:absolute; z-index:20; border-radius:50%; opacity:.9; }
+.blush-left{ left:25px; top:95px; } .blush-right{ right:25px; top:95px; }
+#mouth{ position:absolute; z-index:20; width:32px; height:8px; background:black; border-radius:50px; top:105px; left:68px; transition:height .12s ease; }
+/* talking animation uses JS toggles, but we also add a keyframes fallback */
+@keyframes blink{ 0%,45%,50%,100%{ height:22px; } 48%{ height:2px; } }

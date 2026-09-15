@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="Aguacate AI Mobile v4.0.0">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>Aguacate AI Mobile v4.0.0 🥑📱</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="avatar.css">
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside id="drawer" class="drawer" aria-hidden="true">
+      <div class="drawer-head"><div class="brand">🥑 <span>Aguacate AI</span></div><button id="close-drawer" class="icon-btn">✕</button></div>
+      <div class="user-card"><strong id="user-badge">🥑 Connexion…</strong><span id="role-badge">UTILISATEUR</span></div>
+      <button id="new-chat-btn" class="primary-btn">＋ Nouvelle conversation</button>
+      <div class="drawer-section"><div class="section-title">Conversations</div><div id="conversation-list" class="conversation-list"></div></div>
+      <div class="drawer-actions">
+        <button id="rename-btn" class="menu-btn">✏️ Renommer</button>
+        <button id="file-tool-btn" class="menu-btn">📎 Scanner un fichier</button>
+        <button id="eco-open-btn" class="menu-btn">💧 ÉcoGuacate</button>
+        <button id="rules-btn" class="menu-btn">ℹ️ Règles & informations</button>
+        <button id="theme-btn" class="menu-btn">🌙 / ☀️ Thème</button>
+        <button id="admin-open-btn" class="menu-btn">🛡️ Administration</button>
+      </div>
+    </aside>
+    <div id="drawer-backdrop" class="backdrop"></div>
+
+    <main class="main">
+      <header class="topbar">
+        <button id="menu-btn" class="icon-btn" aria-label="Ouvrir le menu">☰</button>
+        <div class="top-brand"><span>🥑</span><div><strong>Aguacate AI Mobile</strong><small>v4.0.0</small></div></div>
+        <button id="eco-top-btn" class="eco-icon" aria-label="Ouvrir ÉcoGuacate">💧</button>
+      </header>
+
+      <section class="chat-area">
+        <div id="hero" class="hero"><div class="hero-avocado">🥑</div><h1>Bonjour 👋</h1><p>Je suis Aguacate AI Mobile. Pose ta question ou choisis une idée.</p>
+          <div class="suggestions"><button data-prompt="Explique-moi ce cours simplement.">📚 Explique-moi ce cours</button><button data-prompt="Aide-moi à comprendre cet exercice sans faire le travail à ma place.">✏️ Aide-moi à comprendre</button><button data-prompt="Résume ce sujet avec les points importants.">📝 Fais un résumé</button></div>
+        </div>
+        <div id="messages" class="messages" aria-live="polite"></div>
+      </section>
+
+      <div id="file-preview" class="file-preview hidden"></div>
+
+      <section class="eco-mini" aria-label="Consommation ÉcoGuacate">
+        <div class="eco-mini-value"><span>💧</span><strong id="eco-litres">0,0 L</strong><small id="eco-status">Faible</small></div>
+        <div class="eco-mini-bar"><div id="eco-mini-fill" class="eco-mini-fill"></div></div>
+        <div class="eco-mini-scale"><span>0</span><span>20</span><span>50</span><span>85</span><span>100 L+</span></div>
+      </section>
+
+      <form id="composer" class="composer">
+        <button type="button" id="attach-btn" class="round-btn" aria-label="Joindre un fichier">📎</button>
+        <textarea id="prompt" rows="1" placeholder="Écrire un message…" autocomplete="off"></textarea>
+        <button type="button" id="mic-btn" class="round-btn" aria-label="Micro">🎙️</button>
+        <button type="submit" id="send-btn" class="send-btn" aria-label="Envoyer">➤</button>
+      </form>
+    </main>
+  </div>
+
+  <input id="file-input" type="file" hidden accept=".pdf,.docx,.txt,.md,.csv,.json,.xml,.xls,.xlsx,image/*">
+  <div id="toast" class="toast"></div>
+
+  <section id="eco-panel" class="modal hidden" aria-hidden="true"><div class="modal-card eco-card"><button class="modal-close" data-close="eco-panel">✕</button><div class="modal-title">💧 ÉcoGuacate</div><p class="modal-subtitle">Une vue détaillée de la consommation d’eau liée à tes échanges.</p>
+    <div class="eco-detail">
+      <div class="eco-scene"><div class="avocado-orb">🥑</div><svg class="tree-svg" viewBox="0 0 220 300" aria-label="Arbre ÉcoGuacate"><path class="tree-trunk" d="M108 270 C105 230 110 190 105 150 C102 125 86 112 76 98 C98 106 112 118 115 139 C121 115 140 99 164 91 C143 111 132 132 129 157 C126 191 137 229 137 270Z"/><circle class="tree-crown" cx="93" cy="82" r="47"/><circle class="tree-crown" cx="145" cy="75" r="48"/><circle class="tree-crown" cx="119" cy="48" r="42"/><circle class="fruit" cx="82" cy="74" r="7"/><circle class="fruit" cx="145" cy="65" r="7"/><circle class="fruit" cx="116" cy="101" r="7"/></svg><div class="water-pump"><div class="pump-handle"></div><div class="pump-body">💧</div><div class="pump-stream"></div></div></div>
+      <div class="eco-meter"><div class="meter-value"><strong id="eco-detail-litres">0,0 L</strong><span id="eco-detail-pct">0%</span></div><div class="vertical-meter"><div id="eco-vertical-fill" class="vertical-fill"></div><div id="eco-marker" class="meter-marker">●</div></div><div class="meter-labels"><span>100 L+</span><span>85 L</span><span>50 L</span><span>20 L</span><span>0 L</span></div></div>
+    </div>
+    <div id="eco-detail-status" class="eco-detail-status">🟢 Faible</div>
+    <div class="eco-legend"><span>🟢 0–20 L</span><span>🟡 21–50 L</span><span>🟠 51–85 L</span><span>🔴 86–100 L+</span></div>
+  </div></section>
+
+  <section id="rules-panel" class="modal hidden" aria-hidden="true"><div class="modal-card"><button class="modal-close" data-close="rules-panel">✕</button><div class="modal-title">ℹ️ Règles & informations</div><div class="info-block"><h3>🥑 Aguacate AI</h3><p>Un assistant d’IA conçu pour aider à comprendre, apprendre, résumer et poser des questions.</p></div><div class="info-block"><h3>💧 ÉcoGuacate</h3><p>Ce système permet de visualiser de façon ludique la consommation d’eau associée aux échanges et d’encourager un usage réfléchi.</p></div><div class="info-block"><h3>📜 Règles</h3><ul><li>Respecter les autres.</li><li>Ne pas envoyer volontairement de messages insultants ou interdits.</li><li>Utiliser l’IA de manière responsable.</li><li>Pour les devoirs, chercher à comprendre plutôt qu’à copier.</li><li>Ne jamais partager de données personnelles ou confidentielles.</li><li>Vérifier les informations importantes.</li></ul></div><div class="info-block"><h3>🛡️ Modération</h3><p><b>1er gros mot</b> → ⚠️ avertissement sérieux<br><b>2e</b> → ⚠️ deuxième avertissement<br><b>3e</b> → 🚫 bannissement 24 h<br><b>4e, 5e, 6e…</b> → 🚫 bannissement 24 h</p></div><div class="info-block"><h3>⚠️ À retenir</h3><p>L’IA peut faire des erreurs. Pour ta sécurité, ne partage jamais ton mot de passe, ton adresse complète, des informations bancaires ou des informations personnelles sensibles.</p></div></div></section>
+
+  <section id="admin-panel" class="modal hidden" aria-hidden="true"><div class="modal-card admin-card"><button class="modal-close" data-close="admin-panel">✕</button><div class="modal-title">🛡️ Administration</div><div id="admin-summary" class="admin-summary"></div><div class="admin-tabs"><button data-admin-tab="online">En ligne</button><button data-admin-tab="recent">24 h</button><button data-admin-tab="users">Utilisateurs</button><button data-admin-tab="conversations">Conversations</button></div><div id="admin-content"></div><div id="admin-conversation-view" class="admin-conversation-view hidden"></div><button id="admin-refresh" class="primary-btn">↻ Actualiser</button></div></section>
+
+  <script src="voice.js"></script><script src="ai.js"></script><script src="admin.js"></script><script src="app.js"></script>
+  <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});</script>
+</body>
+</html>
