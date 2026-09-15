@@ -219,10 +219,15 @@ async function askAI(messages) {
   return response.choices?.[0]?.message?.content || '🥑 Je n’ai pas reçu de réponse.';
 }
 function moderationHit(u, message) {
-  if (!containsGrossLanguage(message)) return false;
-  addWarning(u, 'Langage grossier détecté automatiquement', 'system');
-  banFor24h(u, 'Langage grossier détecté automatiquement', 'system');
-  return true;
+  if (!containsGrossLanguage(message)) return null;
+  const warning = addWarning(u, 'Langage grossier détecté automatiquement', 'system');
+  const warningNumber = u.warnings.length;
+  if (warningNumber >= 3) {
+    banFor24h(u, 'Troisième avertissement ou plus', 'system');
+    return { banned: true, warning, warningNumber };
+  }
+  saveData();
+  return { banned: false, warning, warningNumber };
 }
 
 app.post('/chat', chatLimiter, ensureAuth, async (req,res) => {
@@ -231,7 +236,7 @@ app.post('/chat', chatLimiter, ensureAuth, async (req,res) => {
     if(!message)return res.status(400).json({ok:false,error:'empty-message'});
     const moderation = moderationHit(u,message);
     if (moderation?.banned) return res.status(403).json({ok:false,error:'banned',bannedUntil:u.bannedUntil,message:'Ton message contient un langage interdit. Ton accès est suspendu pendant 24 heures.'});
-    if (moderation && !moderation.banned) return res.status(400).json({ok:false,error:'warning',warningNumber:moderation.warningNumber,message:moderation.warningNumber===1?'⚠️ Avertissement sérieux : merci de respecter les règles.':'⚠️ Deuxième avertissement : un nouveau message interdit entraînera un bannissement de 24 heures.'});
+    if (moderation) return res.status(400).json({ok:false,error:'warning',warningNumber:moderation.warningNumber,message:moderation.warningNumber===1?'⚠️ Avertissement sérieux : merci de respecter les règles.':'⚠️ Deuxième avertissement : un nouveau message interdit entraînera un bannissement de 24 heures.'});
     if(!data.memories[u.id])data.memories[u.id]=[];
     const system=mode==='Kids'?'Tu es Aguacate AI. Explique avec des mots simples, adaptés à un enfant, sans être infantilisant.':mode==='Collégien'?'Tu es Aguacate AI, un assistant pédagogique pour collégien. Explique clairement et aide à raisonner.':mode==='Professeur'?'Tu es Aguacate AI, assistant pédagogique pour enseignants. Sois structuré et précis.':'Tu es Aguacate AI, assistant polyvalent.';
     data.memories[u.id].push({role:'user',content:message});
@@ -262,3 +267,8 @@ const RESET_SECRET=process.env.RESET_SECRET||'';
 app.post('/internal/reset-consumption',(req,res)=>{const provided=req.headers['x-admin-secret']||req.query.secret;if(!RESET_SECRET||provided!==RESET_SECRET)return res.status(403).json({ok:false,error:'forbidden'});resetDailyConsumption();res.json({ok:true});});
 app.get('*',(req,res)=>res.sendFile(path.join(ROOT,'index.html')));
 module.exports=app;
+
+const PORT = Number(process.env.PORT || 10000);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`[server] Aguacate AI Mobile v4.0.0 écoute sur le port ${PORT}`);
+});

@@ -30,3 +30,12 @@ Variables recommandées :
 
 ## Important
 Le stockage JSON local peut être perdu lors d’un redémarrage d’une instance Render Free. Pour une conservation durable des comptes, conversations et sanctions, il faudra ensuite brancher une base de données persistante.
+
+
+## Render
+
+- Node.js: 22.x
+- Build: `npm install`
+- Start: `npm start`
+- Le serveur écoute automatiquement sur `process.env.PORT` fourni par Render.
+- Le système de modération applique bien : 1er avertissement, 2e avertissement, 3e et suivants = bannissement 24 h.
